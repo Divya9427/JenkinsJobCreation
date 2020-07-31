@@ -1,0 +1,38 @@
+---
+
+- name: Set the python interpreter to version 3
+  set_fact:
+    ansible_python_interpreter: '/usr/bin/python2'
+
+- name: Install python-jenkins
+  become: yes
+  become_method: sudo
+  become_user: root
+  pip: 
+    name: python-jenkins==1.0.0
+  
+- name: Install python-jenkins
+  become: yes
+  become_method: sudo
+  become_user: root
+  pip: 
+    name: lxml==4.0.0
+
+
+- name: Enabling CSRF Protection
+  jenkins_script:
+    script: "{{ setmaster_mode }}"
+    url: "http://{{vm_dns_value}}:32030"
+    user: "{{ jenkins_user }}"
+    password: "{{ jenkins_password }}"
+    args:
+      jenkins_mode: Node.Mode.EXCLUSIVE
+  
+- jenkins_job:
+   config: "{{ lookup('file', 'files/template.xml') }}"
+#   name: java_pipeline 
+   name: shared_library
+   url: "http://{{vm_dns_value}}:32030"
+   user: "{{ jenkins_user }}"
+   password: "{{ jenkins_password }}"
+#   token: "11bcce325d76450eafa88ec98d4366ce73" 
